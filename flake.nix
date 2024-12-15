@@ -21,38 +21,104 @@
   outputs = inputs@{ self, nixpkgs, flake-utils-plus, systems, haumea, ... }:
     let
       inherit (self) outputs;
+      instantiate_lib = lib: pkgs: rec {
+        inherit (pkgs) callPackage;
+        inherit (lib)
+          mapAttrs mapAttrsToList listToAttrs filterAttrs mkMerge attrValues
+          filter flatten attrByPath mkOption mkEnableOption;
+        # bypass.package = ...
+        # -> bypass = ...
+        CondRaiseAttrs = n: set:
+          mapAttrs (_n: v: v."${n}") (filterAttrs (_n: v: v ? "${n}") set);
 
-      callYaziPlugins = pkgs:
-        haumea.lib.load {
-          src = ./plugins;
-          inputs = (removeAttrs pkgs [ "self" "super" "root" ]) // {
-            flake = self;
+        packages = (CondRaiseAttrs "package" YaziPlugins);
+
+        homeManagerModulesRaised = (CondRaiseAttrs "hm-module" YaziPlugins);
+        homeManagerModulesImports = (map (v:
+          { config, lib, ... }:
+          let cfg = config.programs.yazi.yaziPlugins.plugins.${v.name};
+          in {
+            imports = (filter (v: v != { }) [
+              #(inputs: lib.mkIf cfg.enable (v.config cfg inputs))
+              (v.config cfg)
+              (v.options cfg)
+              ({ ... }: {
+                options.programs.yazi.yaziPlugins.plugins.${v.name} = {
+                  package = mkOption {
+                    type = lib.types.package;
+                    description = "The ${v.name} package to use";
+                    default = (attrByPath [ "yaziPlugins" v.name ] null pkgs);
+                  };
+                  enable = mkEnableOption v.name;
+                };
+              })
+            ]);
+          }) (attrValues homeManagerModulesRaised));
+
+        YaziPlugins =
+          let AttrName = path: builtins.baseNameOf (builtins.dirOf path);
+          in haumea.lib.load {
+            src = ./plugins;
+            inputs = (removeAttrs pkgs [ "self" "super" "root" ]) // {
+              flake = self;
+            };
+            # Call files like with callPackage
+            loader = [
+              {
+                matches = str: str == "package.nix";
+                loader = inputs: path: {
+                  "${AttrName path}" =
+                    (haumea.lib.loaders.callPackage inputs path);
+                };
+              }
+              {
+                matches = str: str == "hm-module.nix";
+                loader = _: path:
+                  let
+                    value = haumea.lib.loaders.verbatim { } path;
+                    name = AttrName path;
+                  in {
+                    inherit name;
+                    options = if value ? "options" then
+                      (cfg: inputs: {
+                        options.programs.yazi.yaziPlugins.plugins.${name} =
+                          value.options cfg inputs;
+                      })
+                    else
+                      _: _: { };
+                    config =
+                      if value ? "config" then value.config else _: _: { };
+                  };
+              }
+            ];
           };
-          # Call files like with callPackage
-          loader = [({
-            matches = str: str == "default.nix";
-            loader = haumea.lib.loaders.default;
-          }
-          #with pkgs.lib;
-          #inputs: path:
-          #if hasSuffix "default.nix" "${path}" then
-          #  haumea.lib.loaders.default inputs path
-          #else
-          #  haumea.lib.loaders.callPackage inputs path
-          )];
-          # Make the default.nix's attrs directly children of lib
-          transformer = haumea.lib.transformers.liftDefault;
-        };
+      };
+
     in flake-utils-plus.lib.mkFlake {
       inherit self inputs;
 
       outputsBuilder = channels:
-        let pkgs = channels.nixpkgs;
+        let
+          pkgs = channels.nixpkgs;
+          lib = inputs.nixpkgs.lib;
+          instance = (instantiate_lib lib pkgs);
         in {
-          packages = callYaziPlugins pkgs;
+          inherit (instance) packages;
           formatter = pkgs.nixfmt-rfc-style;
+
         };
 
-      overlays.default = final: prev: { yaziPlugins = callYaziPlugins prev; };
+      overlays.default = let lib = inputs.nixpkgs.lib;
+      in final: prev: { yaziPlugins = (instantiate_lib lib prev).packages; };
+
+      homeManagerModules = rec {
+        yaziPlugins = { lib, ... }: {
+          imports = ((instantiate_lib lib
+            (inputs.nixpkgs.legacyPackages.x86_64-linux)).homeManagerModulesImports)
+          #++ [ ./module.nix ]
+          ;
+        };
+        default = yaziPlugins;
+      };
     };
 }
