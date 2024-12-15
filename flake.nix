@@ -18,52 +18,37 @@
     haumea.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      flake-utils-plus,
-      systems,
-      haumea,
-      ...
-    }:
+  outputs = inputs@{ self, nixpkgs, flake-utils-plus, systems, haumea, ... }:
     let
       inherit (self) outputs;
 
-      callYaziPlugins =
-        pkgs:
+      callYaziPlugins = pkgs:
         haumea.lib.load {
           src = ./plugins;
-          inputs =
-            (removeAttrs pkgs [
-              "self"
-              "super"
-              "root"
-            ])
-            // {
-              flake = self;
-            };
+          inputs = (removeAttrs pkgs [ "self" "super" "root" ]) // {
+            flake = self;
+          };
           # Call files like with callPackage
-          loader =
-            with pkgs.lib;
-            inputs: path:
-            if hasSuffix "default.nix" "${path}" then
-              haumea.lib.loaders.default inputs path
-            else
-              haumea.lib.loaders.callPackage inputs path;
+          loader = [({
+            matches = str: str == "default.nix";
+            loader = haumea.lib.loaders.default;
+          }
+          #with pkgs.lib;
+          #inputs: path:
+          #if hasSuffix "default.nix" "${path}" then
+          #  haumea.lib.loaders.default inputs path
+          #else
+          #  haumea.lib.loaders.callPackage inputs path
+          )];
           # Make the default.nix's attrs directly children of lib
           transformer = haumea.lib.transformers.liftDefault;
         };
-    in
-    flake-utils-plus.lib.mkFlake {
+    in flake-utils-plus.lib.mkFlake {
       inherit self inputs;
 
-      outputsBuilder =
-        channels:
-        let
-          pkgs = channels.nixpkgs;
-        in
-        {
+      outputsBuilder = channels:
+        let pkgs = channels.nixpkgs;
+        in {
           packages = callYaziPlugins pkgs;
           formatter = pkgs.nixfmt-rfc-style;
         };
