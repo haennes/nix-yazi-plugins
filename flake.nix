@@ -39,7 +39,9 @@
           let cfg = config.programs.yazi.yaziPlugins.plugins.${v.name};
           in {
             imports = (filter (v: v != { }) [
-              (inputs: lib.mkIf cfg.enable (v.config cfg inputs))
+              (inputs:
+                lib.mkIf (cfg.enable && config.programs.yazi.yaziPlugins.enable)
+                (v.config cfg inputs))
               #(v.config cfg)
               (v.options cfg)
               ({ ... }: {
