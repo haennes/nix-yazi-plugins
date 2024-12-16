@@ -9,18 +9,18 @@
         options = {
           on = mkOption {
             type = listOf str;
-            example = onexample;
+            #example = onexample;
             default = on;
           };
           run = mkOption {
             type = str;
-            exmaple = runexample;
+            #exmaple = runexample;
             default = run;
           };
 
           desc = mkOption {
             type = str;
-            exmaple = desc;
+            #exmaple = desc;
             default = desc;
           };
         };
