@@ -52,12 +52,12 @@
               (inputs:
                 (v.options ({ inherit cfg; } // (import ./lib.nix inputs)))
                 inputs)
-              ({ ... }: {
+              ({ pkgs, ... }@innerInputs: {
                 options.programs.yazi.yaziPlugins.plugins.${v.name} = {
                   package = mkOption {
                     type = lib.types.package;
                     description = "The ${v.name} package to use";
-                    default = (attrByPath [ "yaziPlugins" v.name ] null pkgs);
+                    default = self.packages.${innerInputs.pkgs.system}.${v.name};
                   };
                   enable = mkEnableOption v.name;
                 };
