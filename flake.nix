@@ -43,6 +43,11 @@
                 lib.mkIf (cfg.enable && config.programs.yazi.yaziPlugins.enable)
                 (v.config ({ inherit cfg; } // (import ./lib.nix inputs))
                   inputs))
+                ({config, ...}@innerInputs:{
+                  config = lib.mkIf cfg.enable {
+                    programs.yazi.plugins.${v.name} = self.packages.${innerInputs.pkgs.system}.${v.name};
+                  };
+                })
               #(v.config cfg)
               (inputs:
                 (v.options ({ inherit cfg; } // (import ./lib.nix inputs)))
