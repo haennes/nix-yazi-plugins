@@ -41,7 +41,8 @@
             imports = (filter (v: v != { }) [
               (inputs:
                 lib.mkIf (cfg.enable && config.programs.yazi.yaziPlugins.enable)
-                (v.config cfg inputs))
+                (v.config ({ inherit cfg; } // (import ./lib.nix inputs))
+                  inputs))
               #(v.config cfg)
               (inputs:
                 (v.options ({ inherit cfg; } // (import ./lib.nix inputs)))
@@ -84,9 +85,9 @@
                   in {
                     inherit name;
                     options = if value ? "options" then
-                      (cfg: inputs: {
+                      (outer_inputs: inputs: {
                         options.programs.yazi.yaziPlugins.plugins.${name} =
-                          value.options cfg inputs;
+                          value.options outer_inputs inputs;
                       })
                     else
                       _: _: { };

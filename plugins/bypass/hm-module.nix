@@ -1,5 +1,5 @@
 {
-  options = { cfg, mkKeyOption }:
+  options = { cfg, mkKeyOption, ... }:
     { lib, ... }: {
       keys = {
         left = mkKeyOption {
@@ -14,9 +14,7 @@
       #mkKeyOption =
       #{};
     };
-  config = cfg:
-    { config, lib, ... }: {
-      programs.yazi.keymap.manager.prepend_keymap =
-        lib.mapAttrsToList (_: key: { inherit (key) on run desc; }) cfg.keys;
-    };
+  config = { cfg, setKeys, ... }:
+    { config, lib, ... }:
+    { } // (setKeys cfg.keys);
 }

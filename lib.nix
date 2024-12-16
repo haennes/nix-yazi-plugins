@@ -1,4 +1,8 @@
 { lib, ... }: {
+  setKeys = keys: {
+    programs.yazi.keymap.manager.prepend_keymap =
+      lib.mapAttrsToList (_: key: { inherit (key) on run desc; }) keys;
+  };
   mkKeyOption = { on, run, desc }:
     let
       inherit (lib) mkOption isList;
