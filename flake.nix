@@ -71,10 +71,11 @@
             loader = [
               {
                 matches = str: str == "package.nix";
-                loader = inputs: path: {
-                  "${AttrName path}" =
-                    (haumea.lib.loaders.callPackage inputs path);
-                };
+                loader = inputs: path:
+                  #{
+                  #"${AttrName path}" =
+                  (haumea.lib.loaders.callPackage inputs path);
+                #};
               }
               {
                 matches = str: str == "hm-module.nix";
