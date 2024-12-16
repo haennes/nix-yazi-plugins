@@ -43,11 +43,11 @@
                 lib.mkIf (cfg.enable && config.programs.yazi.yaziPlugins.enable)
                 (v.config ({ inherit cfg; } // (import ./lib.nix inputs))
                   inputs))
-                ({config, pkgs, ...}@innerInputs:{
-                  config = lib.mkIf cfg.enable {
-                    programs.yazi.plugins.${v.name} = self.packages.${innerInputs.pkgs.system}.${v.name};
-                  };
-                })
+              ({ config, pkgs, ... }@innerInputs: {
+                config = lib.mkIf (cfg.enable && cfg.package != null) {
+                  programs.yazi.plugins.${v.name} = cfg.package;
+                };
+              })
               #(v.config cfg)
               (inputs:
                 (v.options ({ inherit cfg; } // (import ./lib.nix inputs)))
@@ -55,9 +55,10 @@
               ({ pkgs, ... }@innerInputs: {
                 options.programs.yazi.yaziPlugins.plugins.${v.name} = {
                   package = mkOption {
-                    type = lib.types.package;
+                    type = lib.types.nullOr lib.types.package;
                     description = "The ${v.name} package to use";
-                    default = self.packages.${innerInputs.pkgs.system}.${v.name};
+                    default =
+                      self.packages.${innerInputs.pkgs.system}.${v.name};
                   };
                   enable = mkEnableOption v.name;
                 };
