@@ -16,7 +16,7 @@
     };
   config = cfg:
     { config, lib, ... }: {
-      keymap.manager.prepend_keymap =
+      programs.yazi.keymap.manager.prepend_keymap =
         lib.mapAttrsToList (_: key: { inherit (key) on run desc; }) cfg.keys;
     };
 }
