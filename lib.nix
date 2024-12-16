@@ -1,5 +1,5 @@
 { lib, ... }: {
-  mkKeyOption = { keys, run, desc, keysexample ? keys, runexample ? run }:
+  mkKeyOption = { on, run, desc, onexample ? on, runexample ? run }:
     let
       inherit (lib) mkOption isList;
       inherit (lib.types) submodule str either listOf;
@@ -9,8 +9,8 @@
         options = {
           on = mkOption {
             type = listOf str;
-            example = keysexample;
-            default = keys;
+            example = onexample;
+            default = on;
           };
           run = mkOption {
             type = str;
