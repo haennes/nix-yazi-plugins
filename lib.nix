@@ -25,6 +25,7 @@
           };
         };
       }) (listOf str);
+      default = { inherit on run desc; };
       apply = old:
         if isList old then {
           on = old;
