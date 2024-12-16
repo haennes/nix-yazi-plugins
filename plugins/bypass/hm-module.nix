@@ -1,11 +1,22 @@
 {
   options = { cfg, mkKeyOption }:
     { lib, ... }: {
-      test = lib.mkEnableOption "test";
+      keys = {
+        left = mkKeyOption {
+          on = [ "l" ];
+          run = "plugin bypass --args=smart_enter";
+          desc =
+            "Open a file, or recursively enter child directory, skipping children with only a single subdirectory";
+        };
+      };
+      #test = lib.mkEnableOption "test";
+
+      #mkKeyOption =
+      #{};
     };
   config = cfg:
     { config, lib, ... }: {
-      home.file.test.text = if cfg.enable then "a" else "b";
-      home.file.test2.text = if cfg.test then "a" else "b";
+      keymap.manager.prepend_keymap =
+        lib.mapAttrsToList (_: key: { inherit (key) on run desc; }) cfg.keys;
     };
 }
