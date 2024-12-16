@@ -8,11 +8,13 @@
           desc =
             "Open a file, or recursively enter child directory, skipping children with only a single subdirectory";
         };
+        right = mkKeyOption {
+          on = [ "h" ];
+          run = "plugin bypass --args=reverse";
+          desc =
+            "Recursively enter parent directory, skipping parents with only a single subdirectory";
+        };
       };
-      #test = lib.mkEnableOption "test";
-
-      #mkKeyOption =
-      #{};
     };
   config = { cfg, setKeys, ... }:
     { config, lib, ... }:
