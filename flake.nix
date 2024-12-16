@@ -43,7 +43,7 @@
                 lib.mkIf (cfg.enable && config.programs.yazi.yaziPlugins.enable)
                 (v.config cfg inputs))
               #(v.config cfg)
-              (v.options cfg)
+              (v.options ({ inherit cfg; } // (import ./lib.nix inputs)))
               ({ ... }: {
                 options.programs.yazi.yaziPlugins.plugins.${v.name} = {
                   package = mkOption {

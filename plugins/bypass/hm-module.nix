@@ -1,5 +1,8 @@
 {
-  options = cfg: { lib, ... }: { test = lib.mkEnableOption "test"; };
+  options = { cfg, mkKeyOption }:
+    { lib, ... }: {
+      test = lib.mkEnableOption "test";
+    };
   config = cfg:
     { config, lib, ... }: {
       home.file.test.text = if cfg.enable then "a" else "b";
