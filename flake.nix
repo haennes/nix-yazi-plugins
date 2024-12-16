@@ -115,8 +115,7 @@
         yaziPlugins = { lib, ... }: {
           imports = ((instantiate_lib lib
             (inputs.nixpkgs.legacyPackages.x86_64-linux)).homeManagerModulesImports)
-          #++ [ ./module.nix ]
-          ;
+            ++ [ ./module.nix ];
         };
         default = yaziPlugins;
       };
