@@ -1,5 +1,6 @@
 {
-  options = { mkKeyOption, ... }:
+  options =
+    { mkKeyOption, ... }:
     _: {
       keys = {
         toggle = mkKeyOption {
