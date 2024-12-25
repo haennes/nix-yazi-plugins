@@ -1,14 +1,19 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   inherit (lib) mkEnableOption mkOption;
   inherit (lib.types) lines;
   cfg = config.programs.yazi.yaziPlugins;
-in {
+in
+{
   options.programs.yazi.yaziPlugins = {
     enable = mkEnableOption "yaziPlugins";
     runtimeDeps = mkOption {
-      type =
-        lib.types.listOf (lib.types.either lib.types.package lib.types.str);
+      type = lib.types.listOf (lib.types.either lib.types.package lib.types.str);
       description = ''
         Additional runtime packages to add
         gets set by some modules
