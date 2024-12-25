@@ -35,21 +35,28 @@
 
         homeManagerModulesRaised = (CondRaiseAttrs "hm-module" YaziPlugins);
         homeManagerModulesImports = (map (v:
-          { config, lib, ... }:
+          inputs@{ config, lib, ... }:
+          #inputs_outer@{ pkgs, ... }:
           let cfg = config.programs.yazi.yaziPlugins.plugins.${v.name};
           in {
             imports = (filter (v: v != { }) [
-              (inputs:
-                lib.mkIf (cfg.enable && config.programs.yazi.yaziPlugins.enable)
+              ({ pkgs, ... }@inputs:
+                lib.mkIf
+                (cfg.enable && inputs.config.programs.yazi.yaziPlugins.enable)
                 (v.config ({ inherit cfg; } // (import ./lib.nix inputs))
                   inputs))
-              ({ config, pkgs, ... }@innerInputs: {
+              (_: {
                 config = lib.mkIf (cfg.enable && cfg.package != null) {
                   programs.yazi.plugins.${v.name} = cfg.package;
                 };
               })
+              (_: {
+                config = lib.mkIf (cfg.enable && cfg ? "runtimeDeps") {
+                  programs.yazi.yaziPlugins.runtimeDeps = cfg.runtimeDeps;
+                };
+              })
               #(v.config cfg)
-              (inputs:
+              ({ pkgs, ... }@inputs:
                 (v.options ({ inherit cfg; } // (import ./lib.nix inputs)))
                 inputs)
               ({ pkgs, ... }@innerInputs: {
