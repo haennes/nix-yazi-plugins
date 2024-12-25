@@ -11,8 +11,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "lpnh";
     repo = "fg.yazi";
-    rev = "a7e1a828ef4dfb01ace5b03fe0691c909466a645";
-    sha256 = "QxtWyp91XcW8+PSYtER47Pcc1Y9i3LplJyTzeC5Gp2s=";
+    rev = "9bba7430dbcd30995deea600499b069fe6067a3e";
+    sha256 = "sha256-3VjTL/q4gSDIHyPXwUIQA/26bbhWya+01EZbxSKzzQo=";
   };
 
   buildPhase = ''
