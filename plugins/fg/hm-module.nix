@@ -1,6 +1,6 @@
 {
-  options = { mkKeyOption, ... }:
-    { lib, ... }: {
+  options = { mkKeyOption, mkRuntimeDeps, ... }:
+    { pkgs, lib, ... }: {
       keys = {
         fzf_find_name = mkKeyOption {
           on = [ "f" "f" ];
@@ -18,8 +18,8 @@
           desc = "find file by content (exact match)";
         };
       };
+      runtimeDeps =
+        mkRuntimeDeps { pkgs = with pkgs; [ bat fzf ripgrep-all ]; };
     };
-  config = { cfg, setKeys, ... }:
-    { config, lib, ... }:
-    { } // (setKeys cfg.keys);
+  config = { cfg, setKeys, ... }: { pkgs, ... }: { } // (setKeys cfg.keys);
 }
