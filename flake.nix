@@ -77,7 +77,7 @@
                       programs.yazi.yaziPlugins.runtimeDeps = cfg.runtimeDeps;
                     };
                   })
-                  ({ pkgs, ... }@inputs: (v.options ({ inherit cfg; } // (import ./lib.nix inputs))) inputs)
+                  (inputs: (v.options ({ inherit cfg; } // (import ./lib.nix inputs))) inputs)
                   (
                     { pkgs, ... }:
                     {
