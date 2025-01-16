@@ -167,10 +167,10 @@
 
       homeManagerModules = rec {
         yaziPlugins =
-          { lib, ... }:
+          { lib, pkgs, ... }:
           {
             imports =
-              ((instantiate_lib lib (inputs.nixpkgs.legacyPackages.x86_64-linux)).homeManagerModulesImports)
+              ((instantiate_lib lib (inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system})).homeManagerModulesImports)
               ++ [ ./module.nix ];
           };
         default = yaziPlugins;
