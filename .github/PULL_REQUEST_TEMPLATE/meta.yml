@@ -1,0 +1,30 @@
+name: Meta
+description: See Meta Issue
+labels: meta
+title: "[META] "
+body:
+  - type: input
+    id: issue
+    attributes:
+      label: Issue
+      description: The Issue this fixes (just use \# notation)
+    validations:
+      required: true
+  - type: checkboxes
+    id: chore
+    attributes:
+      label: chores
+      descripiton: "Some Chores: Most of them should not be applicable"
+      options:
+        - label: I formatted the code using nix fmt
+          required: true
+        - label: I updated all the modules (if applicable, see issue)
+          required: true
+        - label: I updated the documentation (if applicable)
+          required: true
+        - label: I rebuilt all plugins
+          required: true
+        - label: I tested the change locally
+          required: true
+        - label: I ran the tests (TBD)
+          required: true

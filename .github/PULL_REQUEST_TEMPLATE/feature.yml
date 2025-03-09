@@ -1,0 +1,29 @@
+name: Feature
+description: Adds a new Feature (requires feature issue)
+labels: feature
+title: "[FEAT] "
+body:
+  - type: inputs
+    attributes:
+      label: Issue
+      description: The issue this fixes
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: chore
+    attributes:
+      label: chores
+      options:
+        - label: I formatted the code using nix fmt
+          required: true
+        - label: I updated all the modules (if applicable, see issue)
+          required: true
+        - label: I updated the documentation (if applicable)
+          required: true
+        - label: I rebuilt all plugins
+          required: true
+        - label: I tested the change locally
+          required: true
+        - label: I ran the tests (TBD)
+          required: true

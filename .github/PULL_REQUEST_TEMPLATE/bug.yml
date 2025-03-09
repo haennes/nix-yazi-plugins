@@ -1,0 +1,32 @@
+name: Bug Fix
+description: Fix a reported bug
+labels: [bug]
+title: "[BUG FIX] "
+body:
+  - type: input
+    id: issue
+    attributes:
+      label: Issue
+      description: The Issue this fixes (just use \# notation)
+    validations:
+      required: true
+  - type: checkboxes
+    id: works
+    attributes:
+      label: Working
+      options:
+        - label: I confirm this fixes the bug
+          required: true
+  - type: checkboxes
+    id: chore
+    attributes:
+      label: chores
+      options:
+        - label: I formatted the code using nix fmt
+          required: true
+        - label: I rebuilt all plugins
+          required: true
+        - label: I tested the change locally
+          required: true
+        - label: I ran the tests (TBD)
+          required: true
