@@ -65,7 +65,19 @@
                   (
                     { pkgs, ... }@inputs:
                     lib.mkIf (cfg.enable && inputs.config.programs.yazi.yaziPlugins.enable) (
-                      v.config ({ inherit cfg; } // (import ./lib.nix inputs)) inputs
+                      let
+                        llib = (import ./lib.nix inputs);
+                      in
+                      v.config (
+                        {
+                          inherit cfg;
+                        }
+                        // llib
+                        // {
+                          mkLocalMovedOption = additionalBasePath: llib.mkMovedOption (additionalBasePath ++ [ v.name ]);
+                        }
+                      ) inputs
+
                     )
                   )
                   (_: {
