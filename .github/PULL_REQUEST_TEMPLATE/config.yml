@@ -1,0 +1,9 @@
+pull_request:
+  template:
+    - bug.yml
+    - feature.yml
+    - meta.yml
+    - packaging.yml
+  enforce_template: true
+
+
