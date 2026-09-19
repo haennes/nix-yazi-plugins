@@ -27,11 +27,11 @@
               // (
                 if VAtLeast "26.5.7" then
                   {
-                    id = "git";
+                    group = "git";
                   }
                 else
                   {
-                    group = "git";
+                    id = "git";
                   }
               )
             )
@@ -52,11 +52,11 @@
               // (
                 if VAtLeast "26.5.7" then
                   {
-                    id = "git";
+                    group = "git";
                   }
                 else
                   {
-                    group = "git";
+                    id = "git";
                   }
               )
             )
