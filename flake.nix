@@ -254,7 +254,9 @@
                 { lib, ... }:
                 {
                   imports =
-                    ((instantiate_lib lib (inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system})).homeManagerModulesImports)
+                    ((instantiate_lib lib (inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}))
+                      .homeManagerModulesImports
+                    )
                     ++ [ ./module.nix ];
                 };
               default = yaziPlugins;
